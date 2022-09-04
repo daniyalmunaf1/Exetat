@@ -5058,8 +5058,8 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin::Modal footer-->
 											<div class="modal-footer flex-center">
 												<!--begin::Button-->
-												<button type="reset" id="kt_modal_update_customer_cancel" class="btn btn-light me-3">Discard</button>
-												<!--end::Button-->
+												<a class="btn btn-light me-3" href="{{route('user-details',$user->id)}}">Discard
+												</a>												<!--end::Button-->
 												<!--begin::Button-->
 												<button type="submit" id="" class="btn btn-primary">
 													<span class="indicator-label">Submit</span>
