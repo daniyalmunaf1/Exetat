@@ -1,0 +1,36 @@
+{
+    "inter": {
+        "300": "C:\\xampp\\htdocs\\standafric\\storage\\fonts\/inter_300_e9871fa4d96b94b3e0f0e69d61a899d3",
+        "normal": "C:\\xampp\\htdocs\\standafric\\storage\\fonts\/inter_normal_72162fc38f7a9b7708ce9b52537823e1",
+        "500": "C:\\xampp\\htdocs\\standafric\\storage\\fonts\/inter_500_96eb9565dc629712e5fdf2634a1560c9",
+        "600": "C:\\xampp\\htdocs\\standafric\\storage\\fonts\/inter_600_c0a9e5f9081a5ae196037115674a957c",
+        "bold": "inter_bold_cbd71dae585ea51627faec68dc3982cf"
+    },
+    "line awesome brands": {
+        "normal": "line_awesome_brands_normal_9a00c7aa1f858bc646270f0d97a25dbf"
+    },
+    "line awesome free": {
+        "normal": "C:\\xampp\\htdocs\\standafric\\storage\\fonts\/line_awesome_free_normal_e2d27bc7b031de62fd2ad7c0fa0c731a",
+        "900": "line_awesome_free_900_c63d809723475f5f28345295f21f960a"
+    },
+    "font awesome 6 brands": {
+        "normal": "font_awesome_6_brands_normal_d97701f8e7f1ecd769a3ca5b01d0f955"
+    },
+    "font awesome 6 free": {
+        "normal": "C:\\xampp\\htdocs\\standafric\\storage\\fonts\/font_awesome_6_free_normal_fc439e0b00c9fe7283939f3b25bdfe50",
+        "900": "font_awesome_6_free_900_69b983658ac21a4220e2b976d6163bb2"
+    },
+    "font awesome 5 brands": {
+        "normal": "font_awesome_5_brands_normal_d97701f8e7f1ecd769a3ca5b01d0f955"
+    },
+    "font awesome 5 free": {
+        "900": "C:\\xampp\\htdocs\\standafric\\storage\\fonts\/font_awesome_5_free_900_69b983658ac21a4220e2b976d6163bb2",
+        "normal": "font_awesome_5_free_normal_fc439e0b00c9fe7283939f3b25bdfe50"
+    },
+    "fontawesome": {
+        "normal": "fontawesome_normal_c2c0ea4a5c915953a1be43091bbd1f85"
+    },
+    "fonticon": {
+        "normal": "fonticon_normal_75c1b79b5b3bab5b60d20391258a517c"
+    }
+}

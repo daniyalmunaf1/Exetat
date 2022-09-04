@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class UsersController extends Controller
 {
@@ -29,6 +31,11 @@ class UsersController extends Controller
     public function gotochangepassword()
     {
         return view('auth.change-password');
+    }
+
+    public function adduser()
+    {
+        return view('admin.add-user');
     }
    
 
@@ -70,6 +77,24 @@ class UsersController extends Controller
 
             }
         }
+    }
+
+    public function export_users_information(User $user)
+    {
+        if(Auth::user()->hasRole('admin')){
+            $roles = Role::all();
+            $pdf = PDF::loadView('pdf', [
+                'user'=>$user,
+                'roles'=>$roles
+            ])->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParseEnabled' => true , 'isRemoteEnabled' => true]);
+            return $pdf->download($user->userid.'.pdf');
+            
+        }
+        else
+        {
+            return Redirect()->back()->with('message', 'You are not Allowed for this Action');   
+        }
+        
     }
 
     public function userDetails(User $user)
@@ -195,6 +220,61 @@ class UsersController extends Controller
 
             }
         }
+    }
+
+    public function storeuser(Request $request)
+    {
+        $date = date('dmy');
+        
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:11',
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'profilepic' => ['required', 'max:10000'],
+        ]);
+        $last_id = User::orderBy('six_digit_Id', 'desc')->first()->six_digit_Id;
+        $six_digit = ++$last_id;
+        $six_digit_Id = substr($six_digit,1);
+
+        if($request->role == 'student')
+        {
+            $userid = 'STUD-'.$date. '-'.$six_digit_Id;
+        }
+        else if($request->role == 'contributor'){
+            $userid = 'CONT-'.$date. '-'.$six_digit_Id;
+        }
+        else if($request->role == 'helpdesk'){
+            $userid = 'HELP-'.$date. '-'.$six_digit_Id;
+        }
+        else if($request->role == 'admin'){
+            $userid = 'SYSA-'.$date. '-'.$six_digit_Id;
+        }
+        // dd($userid);
+        
+        
+        // $user = User::create([
+        //     'userid' => $abc,
+        //     'six_digit_Id' => $last_id,
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->password),
+        // ]);
+        $profilepic = app('App\Http\Controllers\UploadImageController')->storage_upload($request->profilepic,'/app/public/Users/Profile/');
+        $user = new User();
+        $user->userid = $userid;
+        $user->six_digit_Id = $six_digit;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->lock = 0;
+        $user->number = $request->number;
+        $user->profilepic = $profilepic;
+        $user->password = Hash::make($request->password);
+        $user->save();
+        $role = Role::where('name',$request->role)->first();
+        $user->roles()->attach($role);
+
+        return redirect()->route('index');
     }
 
     /**

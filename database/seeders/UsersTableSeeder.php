@@ -27,7 +27,7 @@ class UsersTableSeeder extends Seeder
         $studentRole = Role::where('name','student')->first();
 
         $admin = User::create([
-            'userid' => 'SYSA_270822_000001',
+            'userid' => 'SYSA-270822-000001',
             'six_digit_id' => '_000001',
             'name' => 'Admin',
             'lock' => 0,
@@ -38,7 +38,7 @@ class UsersTableSeeder extends Seeder
             'email_verified_at' => '2022-08-19 18:34:11'
         ]);
         $helpdesk = User::create([
-            'userid' => 'HELP_270822_000002',
+            'userid' => 'HELP-270822-000002',
             'six_digit_id' => '_000002',
             'name' => 'Helpdesk',
             'lock' => 0,
@@ -49,7 +49,7 @@ class UsersTableSeeder extends Seeder
             'email_verified_at' => '2022-08-19 18:34:11'
         ]);
         $contributor = User::create([
-            'userid' => 'CONT_270822_000003',
+            'userid' => 'CONT-270822-000003',
             'six_digit_id' => '_000003',
             'name' => 'xyz Contributor',
             'lock' => 0,
@@ -60,7 +60,7 @@ class UsersTableSeeder extends Seeder
             'email_verified_at' => '2022-08-19 18:34:11'
         ]);
         $student = User::create([
-            'userid' => 'STUD_270822_000004',
+            'userid' => 'STUD-270822-000004',
             'six_digit_id' => '_000004',
             'name' => 'xyz Student',
             'lock' => 0,

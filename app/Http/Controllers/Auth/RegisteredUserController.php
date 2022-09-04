@@ -45,9 +45,10 @@ class RegisteredUserController extends Controller
             'TermsAndConditions' => ['required', 'accepted'],
         ]);
         $last_id = User::orderBy('six_digit_Id', 'desc')->first()->six_digit_Id;
-        $six_digit_Id = ++$last_id;
-
-        $userid = 'STUD-'.$date.$six_digit_Id;
+        $six_digit = ++$last_id;
+        $six_digit_Id = substr($six_digit,1);
+        $userid = 'STUD-'.$date. '-'.$six_digit_Id;
+        // dd($userid);
         
         
         // $user = User::create([
@@ -60,7 +61,7 @@ class RegisteredUserController extends Controller
         $profilepic = app('App\Http\Controllers\UploadImageController')->storage_upload($request->profilepic,'/app/public/Users/Profile/');
         $user = new User();
         $user->userid = $userid;
-        $user->six_digit_Id = $six_digit_Id;
+        $user->six_digit_Id = $six_digit;
         $user->name = $request->name;
         $user->email = $request->email;
         $user->lock = 0;
