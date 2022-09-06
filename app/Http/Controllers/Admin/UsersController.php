@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendEmailLink;
 
 class UsersController extends Controller
 {
@@ -36,6 +38,15 @@ class UsersController extends Controller
     public function adduser()
     {
         return view('admin.add-user');
+    }
+
+    public function addUserViaMail($name,$email,$role)
+    {
+        return view('auth.register-by-invite')->with([
+            'name'=>$name,
+            'email'=>$email,
+            'role'=>$role
+        ]);;
     }
    
 
@@ -222,8 +233,24 @@ class UsersController extends Controller
         }
     }
 
+    public function sendMail(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        ]);
+        $name = $request->name; 
+        $email = $request->email;
+        $role = $request->role;
+  
+        Mail::to($email)->send(new SendEmailLink($name,$email,$role));
+        return Redirect()->back()->with('message', 'Invitation Sent Successfully');   
+    }
+
     public function storeuser(Request $request)
     {
+        // dd($request->role);
+
         $date = date('dmy');
         
         $request->validate([
@@ -236,7 +263,6 @@ class UsersController extends Controller
         $last_id = User::orderBy('six_digit_Id', 'desc')->first()->six_digit_Id;
         $six_digit = ++$last_id;
         $six_digit_Id = substr($six_digit,1);
-
         if($request->role == 'student')
         {
             $userid = 'STUD-'.$date. '-'.$six_digit_Id;
@@ -273,6 +299,10 @@ class UsersController extends Controller
         $user->save();
         $role = Role::where('name',$request->role)->first();
         $user->roles()->attach($role);
+
+        event(new Registered($user));
+
+        Auth::login($user);
 
         return redirect()->route('index');
     }
