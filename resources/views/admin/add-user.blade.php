@@ -1028,7 +1028,11 @@ License: For each use you must have a valid license purchased only from above li
                                     <input id="email" placeholder="Email" value="{{ old('email') }}" class="form-control bg-transparent" type="email" name="email" required autofocus />
 									<!--end::Email-->
 								</div>
-								
+								<div class="fv-row mb-8">
+									<!--begin::Number-->
+                                    <input id="number" placeholder="Phone Number" value="{{ old('number') }}" class="form-control bg-transparent" type="number" name="number" required autofocus />
+									<!--end::Number-->
+								</div>
 								<!--end::Input group=-->
 								<!--begin::Accept-->
 								

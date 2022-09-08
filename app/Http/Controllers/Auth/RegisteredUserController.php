@@ -38,10 +38,10 @@ class RegisteredUserController extends Controller
         
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:11',
+            'number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|unique:users',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            // 'profilepic' => ['required', 'string', 'max:255'],
+            'profilepic' => ['required', 'max:100000'],
             'TermsAndConditions' => ['required', 'accepted'],
         ]);
         $last_id = User::orderBy('six_digit_Id', 'desc')->first()->six_digit_Id;

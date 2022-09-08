@@ -40,12 +40,13 @@ class UsersController extends Controller
         return view('admin.add-user');
     }
 
-    public function addUserViaMail($name,$email,$role)
+    public function addUserViaMail($name,$email,$role,$number)
     {
         return view('auth.register-by-invite')->with([
             'name'=>$name,
             'email'=>$email,
-            'role'=>$role
+            'role'=>$role,
+            'number'=>$number
         ]);;
     }
    
@@ -156,7 +157,7 @@ class UsersController extends Controller
         
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:11',
+            'number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|unique:users',
             'email' => ['required', 'string', 'email', 'max:255']
         ]);
         if($request->profilepic != null)
@@ -237,13 +238,15 @@ class UsersController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|unique:users',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         ]);
         $name = $request->name; 
         $email = $request->email;
         $role = $request->role;
+        $number = $request->number;
   
-        Mail::to($email)->send(new SendEmailLink($name,$email,$role));
+        Mail::to($email)->send(new SendEmailLink($name,$email,$role,$number));
         return Redirect()->back()->with('message', 'Invitation Sent Successfully');   
     }
 
@@ -255,7 +258,7 @@ class UsersController extends Controller
         
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:11',
+            'number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|unique:users',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'profilepic' => ['required', 'max:10000'],

@@ -12,18 +12,19 @@ class SendEmailLink extends Mailable
     use Queueable, SerializesModels;
 
 
-    public $name,$email,$role;
+    public $name,$email,$role,$number;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($name,$email,$role)
+    public function __construct($name,$email,$role,$number)
     {
         $this->name = $name;
         $this->email = $email;
         $this->role = $role;
+        $this->number = $number;
     }
 
     /**
@@ -36,7 +37,9 @@ class SendEmailLink extends Mailable
         return $this->markdown('emails.user-invitations')->with([
             'name'=>$this->name,
             'email'=>$this->email,
-            'role'=>$this->role
+            'role'=>$this->role,
+            'number'=>$this->number
+
         ]);
         
     }

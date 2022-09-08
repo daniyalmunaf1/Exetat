@@ -106,7 +106,7 @@ License: For each use you must have a valid license purchased only from above li
 								</div>
 								<div class="fv-row mb-8">
 									<!--begin::Number-->
-                                    <input id="number" placeholder="Phone Number" value="{{ old('number') }}" class="form-control bg-transparent" type="number" name="number" required autofocus />
+                                    <input id="number" placeholder="Phone Number" value="{{ $number }}" class="form-control bg-transparent" type="number" name="number" required autofocus />
 									<!--end::Number-->
 								</div>
 								<!--begin::Input group-->

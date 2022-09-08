@@ -22,7 +22,7 @@ Route::get('UserDetails/{user}', [App\Http\Controllers\Admin\UsersController::Cl
 Route::get('/AddUser', [App\Http\Controllers\Admin\UsersController::Class, 'adduser'])->middleware(['auth','verified','locked','admin'])->name('add-user');
 Route::post('/RegisterByEmail', [App\Http\Controllers\Admin\UsersController::Class, 'storeuser'])->name('register-by-email');
 Route::post('/SendMail', [App\Http\Controllers\Admin\UsersController::class, 'sendMail'])->middleware(['auth','verified','locked','admin'])->name('send-mail');
-Route::get('Create/{name}/{email}/{role}', [App\Http\Controllers\Admin\UsersController::Class, 'addUserViaMail'])->middleware(['Login'])->name('add-user-via-mail');
+Route::get('Create/{name}/{email}/{role}/{number}', [App\Http\Controllers\Admin\UsersController::class, 'addUserViaMail'])->middleware(['Login'])->name('add-user-via-mail');
 
 
 Route::namespace('App\Http\Controllers\Admin')->group(function(){
