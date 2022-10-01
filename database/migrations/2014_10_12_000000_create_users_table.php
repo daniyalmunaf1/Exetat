@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('userid');
             $table->string('name');
             $table->integer('lock');
+            $table->bigInteger('wallet');
             $table->string('number');
             $table->string('profilepic')->nullable();
             $table->string('email')->unique();

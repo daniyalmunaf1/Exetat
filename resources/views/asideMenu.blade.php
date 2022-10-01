@@ -103,6 +103,192 @@
 									<!--end:Menu sub-->
                                 </div>
 								<!--end:Menu item-->
+								 <!--Start:Menu item-->
+								 <div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+                                    <a href="{{route('libraries')}}">
+
+									<!--begin:Menu link-->
+									<span class="menu-link">
+										<span class="menu-icon">
+											<!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg')}}-->
+											<span class="svg-icon svg-icon-5">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M14.4 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H14.4V11Z" fill="currentColor" />
+													<path opacity="0.3" d="M14.4 20V4L21.7 11.3C22.1 11.7 22.1 12.3 21.7 12.7L14.4 20Z" fill="currentColor" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+										</span>
+										<span class="menu-title">Libraries</span>
+										<span class="menu-arrow"></span>
+                                        
+									</span>
+                                    </a>
+                                </div>
+								<!--end:Menu item-->
+								@can('admin')
+								<!--Start:Menu item-->
+								<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+                                    <a href="{{route('libraries-approval')}}">
+
+									<!--begin:Menu link-->
+									<span class="menu-link">
+										<span class="menu-icon">
+											<!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg')}}-->
+											<span class="svg-icon svg-icon-5">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M14.4 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H14.4V11Z" fill="currentColor" />
+													<path opacity="0.3" d="M14.4 20V4L21.7 11.3C22.1 11.7 22.1 12.3 21.7 12.7L14.4 20Z" fill="currentColor" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+										</span>
+										<span class="menu-title">Libraries Approval</span>
+										<span class="menu-arrow"></span>
+                                        
+									</span>
+                                    </a>
+                                </div>
+								<!--end:Menu item-->
+								@endcan
+								 <!--Start:Menu item-->
+								 <div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+                                    <a href="{{route('reviews')}}">
+
+									<!--begin:Menu link-->
+									<span class="menu-link">
+										<span class="menu-icon">
+											<!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg')}}-->
+											<span class="svg-icon svg-icon-5">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M14.4 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H14.4V11Z" fill="currentColor" />
+													<path opacity="0.3" d="M14.4 20V4L21.7 11.3C22.1 11.7 22.1 12.3 21.7 12.7L14.4 20Z" fill="currentColor" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+										</span>
+										<span class="menu-title">Reviews</span>
+										<span class="menu-arrow"></span>
+                                        
+									</span>
+                                    </a>
+                                </div>
+								<!--end:Menu item-->
+								@can('admin')
+								<!--Start:Menu item-->
+								<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+                                    <a href="{{route('reviews-approval')}}">
+
+									<!--begin:Menu link-->
+									<span class="menu-link">
+										<span class="menu-icon">
+											<!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg')}}-->
+											<span class="svg-icon svg-icon-5">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M14.4 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H14.4V11Z" fill="currentColor" />
+													<path opacity="0.3" d="M14.4 20V4L21.7 11.3C22.1 11.7 22.1 12.3 21.7 12.7L14.4 20Z" fill="currentColor" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+										</span>
+										<span class="menu-title">Reviews Approval</span>
+										<span class="menu-arrow"></span>
+                                        
+									</span>
+                                    </a>
+                                </div>
+								@endcan
+								 <!--Start:Menu item-->
+								 <div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+                                    <a href="{{route('questions')}}">
+
+									<!--begin:Menu link-->
+									<span class="menu-link">
+										<span class="menu-icon">
+											<!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg')}}-->
+											<span class="svg-icon svg-icon-5">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M14.4 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H14.4V11Z" fill="currentColor" />
+													<path opacity="0.3" d="M14.4 20V4L21.7 11.3C22.1 11.7 22.1 12.3 21.7 12.7L14.4 20Z" fill="currentColor" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+										</span>
+										<span class="menu-title">Questions</span>
+										<span class="menu-arrow"></span>
+                                        
+									</span>
+                                    </a>
+                                </div>
+								<!--end:Menu item-->
+								@can('admin')
+								<!--Start:Menu item-->
+								<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+                                    <a href="{{route('questions-approval')}}">
+
+									<!--begin:Menu link-->
+									<span class="menu-link">
+										<span class="menu-icon">
+											<!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg')}}-->
+											<span class="svg-icon svg-icon-5">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M14.4 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H14.4V11Z" fill="currentColor" />
+													<path opacity="0.3" d="M14.4 20V4L21.7 11.3C22.1 11.7 22.1 12.3 21.7 12.7L14.4 20Z" fill="currentColor" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+										</span>
+										<span class="menu-title">Questions Approval</span>
+										<span class="menu-arrow"></span>
+                                        
+									</span>
+                                    </a>
+                                </div>
+								<!--end:Menu item-->
+								@endcan
+								<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+                                    <a href="{{route('packages')}}">
+
+									<!--begin:Menu link-->
+									<span class="menu-link">
+										<span class="menu-icon">
+											<!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg')}}-->
+											<span class="svg-icon svg-icon-5">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M14.4 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H14.4V11Z" fill="currentColor" />
+													<path opacity="0.3" d="M14.4 20V4L21.7 11.3C22.1 11.7 22.1 12.3 21.7 12.7L14.4 20Z" fill="currentColor" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+										</span>
+										<span class="menu-title">Packages</span>
+										<span class="menu-arrow"></span>
+                                        
+									</span>
+                                    </a>
+                                </div>
+
+								<div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
+                                    <a href="{{route('sections')}}">
+
+									<!--begin:Menu link-->
+									<span class="menu-link">
+										<span class="menu-icon">
+											<!--begin::Svg Icon | path: icons/duotune/arrows/arr001.svg')}}-->
+											<span class="svg-icon svg-icon-5">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M14.4 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H14.4V11Z" fill="currentColor" />
+													<path opacity="0.3" d="M14.4 20V4L21.7 11.3C22.1 11.7 22.1 12.3 21.7 12.7L14.4 20Z" fill="currentColor" />
+												</svg>
+											</span>
+											<!--end::Svg Icon-->
+										</span>
+										<span class="menu-title">Sections</span>
+										<span class="menu-arrow"></span>
+                                        
+									</span>
+                                    </a>
+                                </div>
                                 <!--Start:Menu item-->
                                 <div data-kt-menu-trigger="click" class="menu-item here show menu-accordion">
                                     <a href="#">

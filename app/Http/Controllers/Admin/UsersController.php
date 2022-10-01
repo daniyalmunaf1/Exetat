@@ -15,6 +15,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendEmailLink;
+use App\Models\Publication;
+use App\Models\Review;
+use App\Models\Package;
+use App\Models\Section;
+use App\Models\Option;
+use App\Models\Question;
 
 class UsersController extends Controller
 {
@@ -143,6 +149,568 @@ class UsersController extends Controller
             'user'=>$user,
             'roles'=>$roles
         ]);
+    }
+    public function libraries()
+    {
+        $publications = Publication::where('approved',1)->get();
+        $first = Publication::where('approved',1)->first();
+        return view('libraries')->with([
+            'publications'=>$publications,
+            'first'=>$first,
+        ]);
+    }
+    public function librariesapproval()
+    {
+        $sno=0;
+        $publications = Publication::where('approved',0)
+        ->join('users','users.id','=','publications.userid')
+        ->select('publications.id as p_id','users.name','users.email','users.profilepic','publications.title','publications.content','publications.created_at')
+        ->get();
+        // dd($publications);
+        return view('admin.libraries_approval')->with([
+            'publications'=>$publications,
+            'sno'=>$sno
+        ]);
+    }
+    public function publication($id)
+    {
+        $publication = Publication::where('id',$id)->first();
+        return view('admin.view-publication')->with('publication',$publication);
+    }
+    public function editpublication($id)
+    {
+        $publication = Publication::where('id',$id)->first();
+        return view('admin.edit-publication')->with('publication',$publication);
+    }
+    public function approvepublication($id)
+    {
+        $publication = Publication::where('id',$id)->first();
+        $user_id = Publication::where('id',$id)->pluck('userid');
+        $user = User::where('id',$user_id)->first();
+        if($user->hasRole('student'))
+        {
+            $user->wallet+=1;
+        }
+        else if($user->hasRole('contributor'))
+        {
+            $user->wallet+=2;
+        }
+        $user->save();
+        $publication->approved = 1;
+        $publication->save();
+        return redirect()->route('libraries-approval')->with('message', 'Publication Approved Succecfully');
+    }
+    public function viewpublication($id)
+    {
+        $publications = Publication::all()->where('approved',1);
+        $first = Publication::where('id',$id)->first();
+        return view('libraries')->with([
+            'publications'=>$publications,
+            'first'=>$first
+        ]);
+    }
+    public function newpublication()
+    {
+        return view('new-publication');
+    }
+    public function storepublication(Request $request)
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string', 'max:100000'],
+        ]);
+        $publication = new Publication();
+        $publication->userid = Auth::user()->id;
+        $publication->title = $request->title;
+        if(Auth::user()->hasRole('admin'))
+        {
+            $publication->approved = 1;
+            $publication->content = $request->content;
+            $publication->save();
+            return redirect()->route('libraries')->with('message', 'Publication Added Successfully');
+        }
+        else
+        {
+            $publication->approved = 0;
+            $publication->content = $request->content;
+            $publication->save();
+            return redirect()->route('libraries')->with('message', 'Publication Approval Request has been sent to Admin');
+        }
+        $publication->content = $request->content;
+        $publication->save();
+        return redirect()->route('libraries')->with('message', 'Publication Approval Request has been sent to Admin');
+    }
+    public function updatepublication(Request $request, Publication $publication)
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string', 'max:100000'],
+        ]);
+        $publication->title = $request->title;
+        $publication->content = $request->content;
+        $publication->save();
+        return redirect()->route('libraries')->with('message', 'Publication Updated SuccessFully');
+    }
+    public function deletepublication($id)
+    {
+        $publication = Publication::where('id',$id)->first();
+        $publication->delete();
+        return redirect()->route('libraries')->with('message', 'Publication Deleted Succecfully');
+    }
+
+    public function packages()
+    {
+        $packages = Package::all();
+        $first = Package::first();
+        return view('packages')->with([
+            'packages'=>$packages,
+            'first'=>$first,
+        ]);
+    }
+    public function viewpackage($id)
+    {
+        $packages = Package::all();
+        $first = Package::where('id',$id)->first();
+        return view('packages')->with([
+            'packages'=>$packages,
+            'first'=>$first
+        ]);
+    }
+    public function editpackage($id)
+    {
+        $package = Package::where('id',$id)->first();
+        return view('admin.edit-package')->with('package',$package);
+    }
+    public function newpackage()
+    {
+        return view('admin.new-package');
+    }
+    public function storepackage(Request $request)
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'amount' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string', 'max:100000'],
+        ]);
+        $package = new Package();
+        $package->title = $request->title;
+        $package->amount = $request->amount;
+        $package->content = $request->content;
+        $package->save();
+        return redirect()->route('packages')->with('message', 'Package Added Successfully');
+    }
+    public function updatepackage(Request $request, Package $package)
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'amount' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string', 'max:100000'],
+        ]);
+        $package->title = $request->title;
+        $package->amount = $request->amount;
+        $package->content = $request->content;
+        $package->save();
+        return redirect()->route('packages')->with('message', 'Package Updated SuccessFully');
+    }
+    public function deletepackage($id)
+    {
+        $package = Package::where('id',$id)->first();
+        $package->delete();
+        return redirect()->route('packages')->with('message', 'Package Deleted Succecfully');
+    }
+
+    public function sections()
+    {
+        $sections = Section::all();
+        $first = Section::first();
+        $go = Section::count();
+        
+        if($first)
+        {
+            $options = Option::where('sectionid',$first->id)->get();
+            return view('sections')->with([
+                'sections'=>$sections,
+                'options'=>$options,
+                'first'=>$first,
+                'go'=>$go,
+            ]);
+        }
+        else
+        {
+            $options = NULL;
+            return view('sections')->with([
+                'sections'=>$sections,
+                'options'=>$options,
+                'go'=>$go,
+            ]);
+        }
+    }
+    public function viewoptions($id)
+    {
+        $sections = Section::all();
+        $first = Section::where('id',$id)->first();
+        $options = Option::where('sectionid',$id)->get();
+        $go = Section::count();
+        
+        return view('sections')->with([
+            'sections'=>$sections,
+            'options'=>$options,
+            'first'=>$first,
+            'go'=>$go,
+
+        ]);
+    }
+    public function editsection($id)
+    {
+        $section = Section::where('id',$id)->first();
+        return view('admin.edit-section')->with('section',$section);
+    }
+    public function newsection()
+    {
+        return view('admin.new-section');
+    }
+    public function storesection(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+        $section = new Section();
+        $section->title = $request->name;
+        $section->save();
+        return redirect()->route('sections')->with('message', 'Section Added Successfully');
+    }
+    public function updatesection(Request $request, Section $section)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+        $section->title = $request->name;
+        $section->save();
+        return redirect()->route('sections')->with('message', 'Section Updated SuccessFully');
+    }
+    public function deletesection($id)
+    {
+        $section = Section::where('id',$id)->first();
+        $section->delete();
+        return redirect()->route('sections')->with('message', 'Section Deleted Succecfully');
+    }
+
+    public function editoption($id)
+    {
+        $option = Option::where('id',$id)->first();
+        return view('admin.edit-option')->with('option',$option);
+    }
+    public function newoption()
+    {
+        $sections = Section::all();
+        return view('admin.new-option')->with('sections',$sections);
+    }
+    public function storeoption(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'section' => ['required', 'string', 'max:255'],
+        ]);
+        $option = new Option();
+        $option->title = $request->name;
+        $option->sectionid = $request->section;
+        $option->save();
+        return redirect()->route('sections')->with('message', 'Course Added Successfully');
+    }
+    public function updateoption(Request $request, Option $option)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+        $option->title = $request->name;
+        $option->save();
+        return redirect()->route('sections')->with('message', 'Course Updated SuccessFully');
+    }
+    public function deleteoption($id)
+    {
+        $option = Option::where('id',$id)->first();
+        $option->delete();
+        return redirect()->route('sections')->with('message', 'Course Deleted Succecfully');
+    }
+
+    public function questions()
+    {
+        $options = Option::all();
+        $first = Option::first();
+        $go = Option::count();
+        
+        if($first)
+        {
+            $questions = Question::where('optionid',$first->id)->where('enabled',1)->get();
+            return view('questions')->with([
+                'questions'=>$questions,
+                'options'=>$options,
+                'first'=>$first,
+                'go'=>$go,
+            ]);
+        }
+        else
+        {
+            $options = NULL;
+            return view('questions')->with([
+                'first'=>$first,
+                'options'=>$options,
+                'go'=>$go,
+            ]);
+        }
+    }
+    public function viewquestions($id)
+    {
+        $options = Option::all();
+        $first = Option::where('id',$id)->first();
+        $questions = Question::where('optionid',$id)->where('enabled',1)->get();
+        $go = Option::count();
+        
+        return view('questions')->with([
+            'questions'=>$questions,
+            'options'=>$options,
+            'first'=>$first,
+            'go'=>$go,
+
+        ]);
+    }
+    public function newquestion()
+    {
+        $options = Option::all();
+        if(Auth::user()->hasRole('admin'))
+        {
+            if(Option::count()==0)
+            {
+                return redirect()->route('questions')->with('message', 'Add a Course First');
+            }
+            return view('new-question')->with('options',$options);
+        }
+        else
+        {
+            return view('new-question');
+        }
+
+    }
+    public function storequestion(Request $request)
+    {
+        if(Auth::user()->hasRole('admin'))
+        {
+            $request->validate([
+                'question' => ['required', 'string', 'max:255'],
+                'answer' => ['required', 'string', 'max:255'],
+            ]);
+        }
+        else
+        {
+            $request->validate([
+                'question' => ['required', 'string', 'max:255'],
+                'answer' => ['required', 'string', 'max:255'],
+            ]);
+        }
+        $question = new Question();
+        $question->enabled = 1;
+        $question->question = $request->question;
+        $question->userid = Auth::user()->id;
+        $question->answer = $request->answer;
+        if(Auth::user()->hasRole('admin'))
+        {
+            $option = Option::where('id',$request->option)->first();
+            $question->option = $option->title;
+            $question->optionid = $request->option;
+            $question->approved = 1;
+            $question->save();
+            return redirect()->route('questions')->with('message', 'Question Added Successfully');
+        }
+        else
+        {
+            $question->approved = 0;
+            $question->save();
+            return redirect()->route('questions')->with('message', 'Question Approval Request has been sent to Admin');
+        }
+        
+    }
+    public function editquestion($id)
+    {
+        $question = Question::where('id',$id)->first();
+        return view('admin.edit-question')->with('question',$question);
+    }
+    public function updatequestion(Request $request, Question $question)
+    {
+        $request->validate([
+            'question' => ['required', 'string', 'max:255'],
+            'answer' => ['required', 'string', 'max:255'],
+        ]);
+        $question->question = $request->question;
+        $question->answer = $request->answer;
+        $question->save();
+        return redirect()->route('questions')->with('message', 'Question Updated SuccessFully');
+    }
+    public function deletequestion($id)
+    {   
+        $question = Question::where('id',$id)->first();
+        $question->delete();
+        return redirect()->route('questions')->with('message', 'Question Deleted Succecfully');
+    }
+    public function questionsapproval()
+    {
+        $sno=0;
+        $questions = Question::join('users','users.id','=','questions.userid')
+        ->select('questions.id as p_id','users.name','users.email','users.profilepic','questions.question','questions.answer','questions.option','questions.created_at','questions.enabled','questions.approved')
+        ->get();
+
+        // dd($publications);
+        return view('admin.questions_approval')->with([
+            'questions'=>$questions,
+            'sno'=>$sno
+        ]);
+    }
+    public function question($id)
+    {
+        $question = Question::where('id',$id)->first();
+        return view('admin.view-question')->with('question',$question);
+    }
+    public function assignquestion($id)
+    {
+        $options = Option::all();
+        $question = Question::where('id',$id)->first();
+        return view('admin.assign-question')->with([
+            'options'=>$options,
+            'question'=>$question,
+        ]);
+    }
+    public function storeassignquestion(Request $request)
+    {
+        $question = Question::where('id',$request->id)->first();
+        $option = Option::where('id',$request->option)->first();
+        $question->option = $option->title;
+        $question->optionid = $request->option;
+        $question->save();
+        return redirect()->route('questions-approval')->with('message', 'Question Assigned to Course Succecfully');
+    }
+    public function questionenabled(Request $request)
+    {
+        $question = Question::where('id',$request->id)->first();
+        // dd($question);
+
+        if($question->enabled == 1)
+        {
+            $question->enabled = 0;
+            $question->save();
+            return redirect()->route('questions-approval')->with('message', 'Question Disabled Succecfully');
+        }
+        else if($question->enabled == 0)
+        {
+            $question->enabled = 1;
+            $question->save();
+            return redirect()->route('questions-approval')->with('message', 'Question Enabled Succecfully');
+        }
+        
+    }
+    
+    public function approvequestion($id)
+    {
+        $question = Question::where('id',$id)->first();
+        if($question->optionid!=NULL)
+        {
+            $user_id = Question::where('id',$id)->pluck('userid');
+            $user = User::where('id',$user_id)->first();
+            if($user->hasRole('student'))
+            {
+                $user->wallet+=1;
+            }
+            else if($user->hasRole('contributor'))
+            {
+                $user->wallet+=2;
+            }
+            $user->save();
+            $question->approved = 1;
+            $question->save();
+            return redirect()->route('questions-approval')->with('message', 'Question Approved Succecfully');
+        }
+        else if($question->optionid==NULL)
+        {
+            return redirect()->route('questions-approval')->with('issue', 'Assign Question to any Course First');
+        }
+    }
+
+    public function reviews()
+    {
+        $reviews = Review::where('approved',1)->get();
+        $first = Review::where('approved',1)->first();
+        return view('reviews')->with([
+            'reviews'=>$reviews,
+            'first'=>$first,
+        ]);
+    }
+    public function reviewsapproval()
+    {
+        $sno=0;
+        $reviews = Review::where('approved',0)
+        ->join('users','users.id','=','reviews.userid')
+        ->select('reviews.id as p_id','users.name','users.email','users.profilepic','reviews.content','reviews.created_at')
+        ->get();
+        // dd($publications);
+        return view('admin.reviews_approval')->with([
+            'reviews'=>$reviews,
+            'sno'=>$sno
+        ]);
+    }
+    public function review($id)
+    {
+        $review = Review::where('id',$id)->first();
+        return view('admin.view-reviews')->with('review',$review);
+    }
+    
+    public function approvereviews($id)
+    {
+        $review = Review::where('id',$id)->first();
+        $user_id = Review::where('id',$id)->pluck('userid');
+        $user = User::where('id',$user_id)->first();
+        if($user->hasRole('student'))
+        {
+            $user->wallet+=1;
+        }
+        else if($user->hasRole('contributor'))
+        {
+            $user->wallet+=2;
+        }
+        $user->save();
+        $review->approved = 1;
+        $review->save();
+        return redirect()->route('reviews-approval')->with('message', 'Review Approved Succecfully');
+    }
+    public function viewreviews($id)
+    {
+        $reviews = Review::all()->where('approved',1);
+        $first = Review::where('id',$id)->first();
+        return view('reviews')->with([
+            'reviews'=>$reviews,
+            'first'=>$first
+        ]);
+    }
+    public function newreviews()
+    {
+        return view('new-reviews');
+    }
+    public function storereviews(Request $request)
+    {
+        $request->validate([
+            'content' => ['required', 'string', 'max:100000'],
+        ]);
+        $review = new Review();
+        $review->userid = Auth::user()->id;
+        $review->name = Auth::user()->name;
+        $review->approved = 0;
+        $review->content = $request->content;
+        $review->save();
+        return redirect()->route('reviews')->with('message', 'Review Approval Request has been sent to Admin');
+    }
+    
+    public function deletereviews($id)
+    {
+        $review = Review::where('id',$id)->first();
+        $review->delete();
+        return redirect()->route('reviews')->with('message', 'Review Deleted Succecfully');
     }
 
     /**
@@ -296,6 +864,7 @@ class UsersController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->lock = 0;
+        $user->wallet = 0;
         $user->number = $request->number;
         $user->profilepic = $profilepic;
         $user->password = Hash::make($request->password);
