@@ -61,6 +61,15 @@ Route::get('/assign-question-{id}', [App\Http\Controllers\Admin\UsersController:
 Route::post('/question-enabled', [App\Http\Controllers\Admin\UsersController::class, 'questionenabled'])->middleware(['auth','verified','locked','admin'])->name('question-enabled');
 Route::post('/store-assign-question', [App\Http\Controllers\Admin\UsersController::class, 'storeassignquestion'])->middleware(['auth','verified','locked','admin'])->name('store-assign-question');
 
+Route::get('/edit-session-{id}', [App\Http\Controllers\Admin\UsersController::class, 'editsession'])->middleware(['auth','verified','locked','admin'])->name('edit-session');
+Route::post('/update-session-{session}', [App\Http\Controllers\Admin\UsersController::class, 'updatesession'])->middleware(['auth','verified','locked','admin'])->name('update-session');
+Route::get('/delete-session-{id}', [App\Http\Controllers\Admin\UsersController::class, 'deletesession'])->middleware(['auth','verified','locked','admin'])->name('delete-session');
+Route::get('/new-session', [App\Http\Controllers\Admin\UsersController::class, 'newsession'])->middleware(['auth','verified','locked','admin'])->name('new-session');
+Route::post('/store-session', [App\Http\Controllers\Admin\UsersController::class, 'storesession'])->middleware(['auth','verified','locked','admin'])->name('store-session');
+Route::get('/session-attempts', [App\Http\Controllers\Admin\UsersController::class, 'sessionattempts'])->middleware(['auth','verified','locked','admin'])->name('session-attempts');
+Route::get('/view-attempt-{id}', [App\Http\Controllers\Admin\UsersController::class, 'viewattempt'])->middleware(['auth','verified','locked','admin'])->name('view-attempt');
+Route::post('/store-attempt-status-{id}', [App\Http\Controllers\Admin\UsersController::class, 'storeattemptstatus'])->middleware(['auth','verified','locked','admin'])->name('store-attempt-status');
+
 
 Route::post('/RegisterByEmail', [App\Http\Controllers\Admin\UsersController::class, 'storeuser'])->name('register-by-email');
 Route::post('/SendMail', [App\Http\Controllers\Admin\UsersController::class, 'sendMail'])->middleware(['auth','verified','locked','admin'])->name('send-mail');
@@ -90,6 +99,13 @@ Route::get('/questions', [App\Http\Controllers\Admin\UsersController::class, 'qu
 Route::get('/view-questions-{id}', [App\Http\Controllers\Admin\UsersController::class, 'viewquestions'])->middleware(['auth','verified','locked'])->name('view-questions');
 Route::get('/new-question', [App\Http\Controllers\Admin\UsersController::class, 'newquestion'])->middleware(['auth','verified','locked'])->name('new-question');
 Route::post('/store-question', [App\Http\Controllers\Admin\UsersController::class, 'storequestion'])->middleware(['auth','verified','locked'])->name('store-question');
+Route::get('/sessions', [App\Http\Controllers\Admin\UsersController::class, 'sessions'])->middleware(['auth','verified','locked'])->name('sessions');
+Route::get('/view-sessions-{id}', [App\Http\Controllers\Admin\UsersController::class, 'viewsessions'])->middleware(['auth','verified','locked'])->name('view-sessions');
+Route::get('/attempt-{exam}-{id}', [App\Http\Controllers\Admin\UsersController::class, 'attempt'])->middleware(['auth','verified','locked'])->name('attempt');
+Route::post('/store-question', [App\Http\Controllers\Admin\UsersController::class, 'storequestion'])->middleware(['auth','verified','locked'])->name('store-question');
+Route::post('/store-attempt-{exam}-{id}-{attemptid}', [App\Http\Controllers\Admin\UsersController::class, 'storeattempt'])->middleware(['auth','verified','locked'])->name('store-attempt');
+Route::get('/activity-log', [App\Http\Controllers\Admin\UsersController::class, 'activitylog'])->middleware(['auth','verified','locked'])->name('activity-log');
+
 Route::get('ExportUsersInformation/{user}', [App\Http\Controllers\Admin\UsersController::class, 'export_users_information'])->middleware(['auth','verified','locked'])->name('export-users-information');
 
 

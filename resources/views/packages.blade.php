@@ -59,19 +59,7 @@ License: For each use you must have a valid license purchased only from above li
 						<div class="container d-flex flex-stack flex-wrap gap-2" id="kt_header_container">
 							<!--begin::Page title-->
 							<div class="page-title d-flex flex-column align-items-start justify-content-center flex-wrap me-lg-2 pb-5 pb-lg-0" data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_container'}">
-								<!--begin::Heading-->
-								<h1 class="d-flex flex-column text-dark fw-bold my-0 fs-1">Reply</h1>
-								<!--end::Heading-->
-								<!--begin::Breadcrumb-->
-								<ul class="breadcrumb breadcrumb-dot fw-semibold fs-base my-1">
-									<li class="breadcrumb-item text-muted">
-										<a href="../../demo3/dist/index.html" class="text-muted">Home</a>
-									</li>
-									<li class="breadcrumb-item text-muted">Apps</li>
-									<li class="breadcrumb-item text-muted">Inbox</li>
-									<li class="breadcrumb-item text-dark">View &amp; Reply</li>
-								</ul>
-								<!--end::Breadcrumb-->
+								
 							</div>
 							<!--end::Page title=-->
 							<!--begin::Wrapper-->
@@ -1004,6 +992,8 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="card card-flush mb-0" data-kt-sticky="false" data-kt-sticky-name="inbox-aside-sticky" data-kt-sticky-offset="{default: false, xl: '0px'}" data-kt-sticky-width="{lg: '275px'}" data-kt-sticky-left="auto" data-kt-sticky-top="150px" data-kt-sticky-animation="false" data-kt-sticky-zindex="95">
 										<!--begin::Aside content-->
 										<div class="card-body">
+										<h1 style="text-align:center;margin-bottom:10px;">Packages</h1>
+
 											@can('admin')
 											<!--begin::Button-->
 											<a href="{{route('new-package')}}" class="btn btn-primary text-uppercase w-100 mb-10">New Package</a>

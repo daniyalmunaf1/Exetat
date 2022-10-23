@@ -15,12 +15,15 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendEmailLink;
+use App\Models\Attempt;
 use App\Models\Publication;
 use App\Models\Review;
 use App\Models\Package;
 use App\Models\Section;
+use App\Models\Session;
 use App\Models\Option;
 use App\Models\Question;
+use App\Models\Answer;
 
 class UsersController extends Controller
 {
@@ -318,6 +321,302 @@ class UsersController extends Controller
         $package->delete();
         return redirect()->route('packages')->with('message', 'Package Deleted Succecfully');
     }
+
+    public function sessions()
+    {
+        $sections = Session::join('sections','sections.id','=','sessions.sectionid')->get();
+        $first = Section::first();
+        $go = Section::count();
+        $Exam1 = Attempt::where('sectionid',$first->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',1)
+        ->first();
+        $Exam2 = Attempt::where('sectionid',$first->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',2)
+        ->first();
+        $Exam3 = Attempt::where('sectionid',$first->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',3)
+        ->first();
+        $Exam4 = Attempt::where('sectionid',$first->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',4)
+        ->first();
+        if($first)
+        {
+            $session = Session::where('sectionid',$first->id)->first();
+            return view('sessions')->with([
+                'sections'=>$sections,
+                'session'=>$session,
+                'first'=>$first,
+                'Exam1'=>$Exam1,
+                'Exam2'=>$Exam2,
+                'Exam3'=>$Exam3,
+                'Exam4'=>$Exam4,
+                'go'=>$go,
+            ]);
+        }
+        else
+        {
+            $session = NULL;
+            return view('sessions')->with([
+                'sections'=>$sections,
+                'session'=>$session,
+                'go'=>$go,
+            ]);
+        }
+    }
+    public function viewsessions($id)
+    {
+        $sections = Session::join('sections','sections.id','=','sessions.sectionid')->get();
+        $first = Section::where('id',$id)->first();
+        $session = Session::where('sectionid',$id)->first();
+        $go = Section::count();
+        $Exam1 = Attempt::where('sectionid',$first->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',1)
+        ->first();
+        $Exam2 = Attempt::where('sectionid',$first->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',2)
+        ->first();
+        $Exam3 = Attempt::where('sectionid',$first->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',3)
+        ->first();
+        $Exam4 = Attempt::where('sectionid',$first->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',4)
+        ->first();
+
+        return view('sessions')->with([
+            'sections'=>$sections,
+            'session'=>$session,
+            'first'=>$first,
+            'Exam1'=>$Exam1,
+            'Exam2'=>$Exam2,
+            'Exam3'=>$Exam3,
+            'Exam4'=>$Exam4,
+            'go'=>$go,
+
+        ]);
+    }
+    public function newsession()
+    {
+        $ids = Session::pluck('sectionid');
+        // dd();
+        $sections = Section::whereNotIn('id', $ids)->get();
+        return view('admin.new-session')->with('sections',$sections);
+    }
+    public function storesession(Request $request)
+    {
+        $request->validate([
+            'numberOfQuestions' => ['required', 'string', 'max:255'],
+            'section' => ['required', 'string', 'max:255'],
+            'duration' => ['required', 'string', 'max:255'],
+        ]);
+        
+        $avlquestions = Question::join('options','options.id','=','questions.optionid')->where('options.sectionid',$request->section)->count();
+        if($avlquestions<($request->numberOfQuestions*4))
+        {
+            $message = "Insufficient Questions in this Section";
+            return redirect()->back()->with('messages',$message);
+        }
+        else
+        {
+            $session = new Session();
+            $session->numberOfQuestions = $request->numberOfQuestions;
+            $session->sectionid = $request->section;
+            $session->duration = $request->duration;
+            $session->save();
+            return redirect()->route('sessions')->with('message', 'Session Added Successfully');
+        }
+    }
+    public function editsession($id)
+    {
+        $session = Session::where('id',$id)->first();
+        $ids = Session::pluck('sectionid');
+        $sections = Section::whereNotIn('id', $ids)->get();
+        $sectiontitle = Section::where('id',$session->sectionid)->value('title');
+        // dd($sectiontitle);
+        return view('admin.edit-session')->with([
+            'session'=>$session,
+            'sectiontitle'=>$sectiontitle,
+            'sections'=>$sections
+        ]);
+    }
+    public function updatesession(Request $request, Session $session)
+    {
+        $request->validate([
+            'numberOfQuestions' => ['required', 'string', 'max:255'],
+            'section' => ['required', 'string', 'max:255'],
+            'duration' => ['required', 'string', 'max:255'],
+        ]);
+        $avlquestions = Question::join('options','options.id','=','questions.optionid')->where('options.sectionid',$request->section)->count();
+        if($avlquestions<($request->numberOfQuestions*4))
+        {
+            $message = "Insufficient Questions in this Section";
+            return redirect()->back()->with('messages',$message);
+        }
+        else
+        {
+            $session->numberOfQuestions = $request->numberOfQuestions;
+            $session->sectionid = $request->section;
+            $session->duration = $request->duration;
+            $session->save();
+            return redirect()->route('sessions')->with('message', 'Session Updated SuccessFully');
+        }
+    }
+    public function deletesession($id)
+    {
+        $session = session::where('id',$id)->first();
+        $session->delete();
+        return redirect()->route('sessions')->with('message', 'Session Deleted Succecfully');
+    }
+    public function attempt($exam,$id)
+    {   
+        $duration = Session::where('id',$id)->value('duration');
+        $Sectionid = Session::where('id',$id)->pluck('sectionid');
+        $numberOfQuestion = Session::where('id',$id)->first();
+        $section = Section::where('id',$Sectionid)->first();
+        $no = $numberOfQuestion->numberOfQuestions;
+        $sno = 0;
+
+        $alreadyattempted = Attempt::where('sectionid',$section->id)
+        ->where('userid',Auth::user()->id)
+        ->where('exam',$exam)
+        ->first();
+        $lastattempted = Attempt::where('sectionid',$section->id)
+        ->where('userid',Auth::user()->id)
+        // ->value('exam')
+        ->orderBy('created_at', 'desc')->first();
+        // dd($lastattempted);
+        if($alreadyattempted)
+        {
+            return redirect()->back()->with('message', 'Already Attempted');
+        }
+        else 
+        {
+            if($lastattempted)
+            {
+                if($exam-$lastattempted->exam==1)
+                {
+                    $oldquestions = Answer::join('attempts','attempts.id','=','answers.attemptid')
+                    ->where('sectionid',$section->id)
+                    ->where('userid',Auth::user()->id)
+                    ->get('answers.question');
+                    $questions = Question::join('options','options.id','=','questions.optionid')->where('options.sectionid',$Sectionid)->whereNotIn('questions.question', $oldquestions)->inRandomOrder()->limit($no)->get();
+                    $attempt = new Attempt();
+                    $attempt->sectionid = $section->id;
+                    $attempt->session = $section->title;
+                    $attempt->userid = Auth::user()->id;
+                    $attempt->exam = $exam;
+                    $attempt->save();
+                    
+                    return view('attempt')->with([
+                        'questions'=>$questions,
+                        'section'=>$section,
+                        'exam'=>$exam,
+                        'attempt'=>$attempt,
+                        'duration'=>$duration,
+                        'sno'=>$sno
+                    ]);
+                }
+                else
+                {
+                    return redirect()->back()->with('message', 'Attempt the Remaining Exams First');
+                }
+            }
+            else
+            {
+                if($exam==1)
+                {
+                    $questions = Question::join('options','options.id','=','questions.optionid')->where('options.sectionid',$Sectionid)->inRandomOrder()->limit($no)->get();
+                    $attempt = new Attempt();
+                    $attempt->sectionid = $section->id;
+                    $attempt->userid = Auth::user()->id;
+                    $attempt->session = $section->title;
+                    $attempt->exam = $exam;
+                    $attempt->save();
+                    
+                    return view('attempt')->with([
+                        'questions'=>$questions,
+                        'section'=>$section,
+                        'exam'=>$exam,
+                        'attempt'=>$attempt,
+                        'duration'=>$duration,
+                        'sno'=>$sno
+                    ]);
+                }
+                else
+                {
+                    return redirect()->back()->with('message', 'Attempt the Remaining Exams First');
+                }
+            }
+        }
+        
+    }
+    public function storeattempt(Request $request,$exam,$id,$attemptid)
+    {
+        $a = 0;
+        foreach($request->question as $question)
+        {
+            $answer= new Answer();
+            $answer->attemptid = $attemptid;
+            $answer->question = $question;
+            $answer->answer = $request->answer[$a];
+            $answer->save();
+            $a++;
+        }
+        // dd($a);
+        return redirect()->route('sessions')->with('message', 'Exam Attempt has been Submitted');
+    }
+    public function sessionattempts()
+    {
+        $sno=0;
+        $attempts = Attempt::join('users','users.id','=','attempts.userid')
+        ->select('attempts.id as a_id','users.name','users.email','users.profilepic','attempts.session','attempts.exam','attempts.status','attempts.created_at','attempts.score')
+        ->get();
+        // dd($publications);
+        return view('admin.session-attempts')->with([
+            'attempts'=>$attempts,
+            'sno'=>$sno
+        ]);
+    }
+    public function activitylog()
+    {
+        $sno=0;
+        $attempts = Attempt::join('users','users.id','=','attempts.userid')->where('users.id',Auth::user()->id)
+        ->select('attempts.id as a_id','users.name','users.email','users.profilepic','attempts.session','attempts.exam','attempts.status','attempts.created_at','attempts.score')
+        ->get();
+        // dd($publications);
+        return view('student.activity-log')->with([
+            'attempts'=>$attempts,
+            'sno'=>$sno
+        ]);
+    }
+    public function viewattempt($id)
+    {
+        $answers = Answer::where('attemptid',$id)->get();
+        $attempt = Attempt::where('id',$id)->first();
+        return view('admin.view-attempt')->with([
+            'answers'=>$answers,
+            'attempt'=>$attempt,
+            'id'=>$id
+        ]);
+    }
+    
+    public function storeattemptstatus(Request $request,$id)
+    {
+        $attempt = Attempt::where('id',$id)->first();
+        $attempt->score = $request->score;
+        $attempt->status = $request->status;
+        $attempt->save();
+        return redirect()->route('session-attempts')->with('message', 'Score Assigned');
+
+    }
+
 
     public function sections()
     {
